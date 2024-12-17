@@ -1,143 +1,138 @@
+import pygame
 import random
 
-# Player Class
+# Initialize Pygame
+pygame.init()
+
+# Screen dimensions
+WIDTH = 800
+HEIGHT = 600
+
+# Colors
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+BLACK = (0, 0, 0)
+
+# Fonts
+pygame.font.init()
+font = pygame.font.SysFont("arial", 24)
+
+# Set up screen
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Combat System")
+
+# Load images
+background = pygame.image.load("background.jpg").convert()
+warrior_img = pygame.image.load("warrior.png").convert_alpha()
+enemy_img = pygame.image.load("enemy.png").convert_alpha()
+
+# Classes
 class Player:
-  def __init__(self, name, role):
-    self.name = name
-    self.role = role
-    self.hp = 100
-    self.attack = 10
-    self.defense = 5
-    self.inventory = ["Health Potion"] # Starting Item for all Characters
+    def __init__(self, name, role, x, y):
+        self.name = name
+        self.role = role
+        self.hp = 100
+        self.mana = 50
+        self.attack = 10
+        self.defense = 5
+        self.x = x
+        self.y = y
+        self.sprite = warrior_img  # Default sprite for the player
+    
+    def draw(self):
+        screen.blit(self.sprite, (self.x, self.y))
+        # HP Bar
+        pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
+        pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
+        # Mana Bar
+        pygame.draw.rect(screen, BLUE, (self.x, self.y + 70, self.mana, 10))
+    
+    def take_damage(self, damage):
+        self.hp -= max(damage - self.defense, 0)
+    
+    def use_mana(self, amount):
+        if self.mana >= amount:
+            self.mana -= amount
+            return True
+        return False
 
-  def take_damage(self, damage):
-    self.hp -= max(damage - self.defense, 0)
-    print(f"{self.name} takes {damage} damage! HP: {self.hp}")
-
-  def attack_enemy(self, enemy):
-    damage = random.randint(5, self.attack)
-    print(f"{self.name} attacks {enemy.name} for {damage} damage!")
-    enemy.take_damage(damage)
-
-# Enemy Class
 class Enemy:
-  def __init__(self, name, hp, attack):
-    self.name = name
-    self.hp = hp
-    self.attack = attack
+    def __init__(self, name, x, y):
+        self.name = name
+        self.hp = 100
+        self.sprite = enemy_img
+        self.x = x
+        self.y = y
+    
+    def draw(self):
+        screen.blit(self.sprite, (self.x, self.y))
+        # HP Bar
+        pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
+        pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
+    
+    def take_damage(self, damage):
+        self.hp -= damage
 
-  def take_damage(self, damage):
-    self.hp -= damage
-    print(f"{self.name} takes {damage} damage! HP: {self.hp}")
+# Main combat function
+def combat():
+    player = Player("Hero", "Warrior", 100, 300)
+    enemy = Enemy("Goblin", 500, 300)
+    clock = pygame.time.Clock()
+    running = True
 
-  def attack_player(self, player):
-    damage = random.randint(3, self.attack)
-    print(f"{self.name} attacks {player.name} for {damage} damage!")
-    player.take_damage(damage)
-
-def combat(player, enemy):
-    print(f"\nA wild {enemy.name} appears!")
-    while player.hp > 0 and enemy.hp > 0:
-        print("\nChoose your action:")
-        print("1) Attack")
-        print("2) Defend")
-        print("3) Use Item (if available)")
-        print("4) Use Special Ability")
-
-        print(f"HP: {player.hp}, Mana: {player.mana}")  # Display current status
-        choice = input("Enter 1, 2, 3, or 4: ")
-
-        if choice == "1":  # Player attacks
-            player.attack_enemy(enemy)
-
-        elif choice == "2":  # Player defends
-            print(f"{player.name} raises their defense!")
-            player.defense += 5
-
-        elif choice == "3":  # Player uses an item
-            if "Health Potion" in player.inventory:
-                print(f"{player.name} uses a Health Potion!")
-                player.hp += 20
-                player.inventory.remove("Health Potion")
-                print(f"{player.name}'s HP: {player.hp}")
-            else:
-                print("You have no items to use!")
-
-        elif choice == "4":  # Player uses their class-specific ability
-            if player.role == "Warrior":
-                mana_cost = 15
-                if player.use_mana(mana_cost):
-                    print(f"{player.name} uses Power Strike! (-{mana_cost} Mana)")
-                    damage = random.randint(15, 25)
-                    print(f"Power Strike hits {enemy.name} for {damage} damage!")
+    # Buttons
+    attack_button = pygame.Rect(50, 500, 100, 50)
+    defend_button = pygame.Rect(200, 500, 100, 50)
+    ability_button = pygame.Rect(350, 500, 150, 50)
+    
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if attack_button.collidepoint(event.pos):
+                    # Player attacks
+                    damage = random.randint(5, 10)
+                    print(f"Player attacks for {damage}!")
                     enemy.take_damage(damage)
-
-            elif player.role == "Mage":
-                mana_cost = 20
-                if player.use_mana(mana_cost):
-                    print(f"{player.name} casts Fireball! (-{mana_cost} Mana)")
-                    damage = random.randint(20, 30)
-                    print(f"Fireball scorches {enemy.name} for {damage} damage!")
-                    enemy.take_damage(damage)
-
-            elif player.role == "Rogue":
-                mana_cost = 10
-                if player.use_mana(mana_cost):
-                    print(f"{player.name} attempts a Sneak Attack! (-{mana_cost} Mana)")
-                    if random.random() > 0.2:  # 80% success rate
-                        damage = random.randint(10, 20) * 2  # Critical hit
-                        print(f"Sneak Attack critically hits {enemy.name} for {damage} damage!")
+                elif defend_button.collidepoint(event.pos):
+                    print("Player defends!")
+                    player.defense += 5
+                elif ability_button.collidepoint(event.pos):
+                    if player.use_mana(15):
+                        damage = random.randint(15, 25)
+                        print(f"Player uses Power Strike for {damage}!")
                         enemy.take_damage(damage)
                     else:
-                        print(f"{player.name}'s Sneak Attack missed!")
-
-        else:
-            print("Invalid choice. You lose your turn!")
-
-        # Reset defense after defending
-        if choice == "2":
-            player.defense -= 5
-
-        # Enemy's turn if still alive
-        if enemy.hp > 0:
-            enemy.attack_player(player)
-
-        # Check for end conditions
+                        print("Not enough mana!")
+        
+        # Check for victory/defeat
         if player.hp <= 0:
-            print(f"\nYou have been defeated by {enemy.name}... Game Over!")
-        elif enemy.hp <= 0:
-            print(f"\nYou have defeated {enemy.name}!")
-            loot = random.choice(["Health Potion", None])  # Random loot drop
-            if loot:
-                player.inventory.append(loot)
-                print(f"{enemy.name} dropped a {loot}!")
+            print("You lost!")
+            running = False
+        if enemy.hp <= 0:
+            print("You won!")
+            running = False
+        
+        # Draw everything
+        screen.blit(background, (0, 0))
+        player.draw()
+        enemy.draw()
+        
+        # Draw buttons
+        pygame.draw.rect(screen, WHITE, attack_button)
+        pygame.draw.rect(screen, WHITE, defend_button)
+        pygame.draw.rect(screen, WHITE, ability_button)
 
-def main():
-  print("Welcome to the Text-Based RPG Game!")
-  name = input("Enter your characters name: ")
-  print("Choose your role: 1) Warrior 2) Mage 3) Rogue")
-  role_choice = input("Enter 1, 2, or 3: ")
+        screen.blit(font.render("Attack", True, BLACK), (60, 515))
+        screen.blit(font.render("Defend", True, BLACK), (210, 515))
+        screen.blit(font.render("Power Strike", True, BLACK), (360, 515))
 
-  role = "Warrior"
-  if role_choice == "2":
-    role = "Mage"
-  elif role_choice == "3":
-    role = "Rogue"
+        pygame.display.flip()
+        clock.tick(30)
 
-  player = Player(name, role)
-  print(f"\nWelcome {player.name} the {player.role}!")
-
-  # Enemies
-  goblin = Enemy("Goblin", 50, 8)
-  dragon = Enemy("Dragon", 120, 15)
-
-  # Combat
-  combat(player, goblin)
-  if player.hp > 0:
-      combat(player, dragon)
-
-  print("Thanks for playing!")
-
-if __name__ == "__main__":
-    main()
-
+# Run the combat
+combat()
+pygame.quit()
