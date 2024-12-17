@@ -2,7 +2,7 @@ import random
 
 # Player Class
 class Player:
-  def _init_(self, name, role):
+  def __init__(self, name, role):
     self.name = name
     self.role = role
     self.hp = 100
@@ -21,7 +21,7 @@ def attack_enemy(self, enemy):
 
 # Enemy Class
 class Enemy:
-  def _init_(self, name, hp, attack):
+  def __init__(self, name, hp, attack):
     self.name = name
     self.hp = hp
     self.attack = attack
