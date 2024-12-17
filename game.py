@@ -10,14 +10,14 @@ class Player:
     self.defense = 5
     self.inventory = []
 
-def take_damage(self, damage):
-  self.hp -= max(damage - self.defense, 0)
-  print(f"{self.name} takes {damage} damage! HP: {self.hp}")
+  def take_damage(self, damage):
+    self.hp -= max(damage - self.defense, 0)
+    print(f"{self.name} takes {damage} damage! HP: {self.hp}")
 
-def attack_enemy(self, enemy):
-  damage = random.randint(5, self.attack)
-  print(f"{self.name} attacks {enemy.name} for {damage} damage!")
-  enemy.take_damage(damage)
+  def attack_enemy(self, enemy):
+    damage = random.randint(5, self.attack)
+    print(f"{self.name} attacks {enemy.name} for {damage} damage!")
+    enemy.take_damage(damage)
 
 # Enemy Class
 class Enemy:
