@@ -64,7 +64,7 @@ def main():
 
   # Enemies
   goblin = Enemy("Goblin", 50, 8)
-  dragon = Enemy("Dragon, 120, 15)
+  dragon = Enemy("Dragon", 120, 15)
 
   # Combat
   combat(player, goblin)
