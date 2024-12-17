@@ -35,7 +35,6 @@ class Enemy:
     print(f"{self.name} attacks {player.name} for {damage} damage!")
     player.take_damage(damage)
 
-# Combat
 def combat(player, enemy):
     print(f"\nA wild {enemy.name} appears!")
     while player.hp > 0 and enemy.hp > 0:
@@ -43,8 +42,9 @@ def combat(player, enemy):
         print("1) Attack")
         print("2) Defend")
         print("3) Use Item (if available)")
-        print("4) Use Special Ability")  # Added for class-specific abilities
+        print("4) Use Special Ability")
 
+        print(f"HP: {player.hp}, Mana: {player.mana}")  # Display current status
         choice = input("Enter 1, 2, 3, or 4: ")
 
         if choice == "1":  # Player attacks
@@ -65,25 +65,31 @@ def combat(player, enemy):
 
         elif choice == "4":  # Player uses their class-specific ability
             if player.role == "Warrior":
-                print(f"{player.name} uses Power Strike!")
-                damage = random.randint(15, 25)
-                print(f"Power Strike hits {enemy.name} for {damage} damage!")
-                enemy.take_damage(damage)
+                mana_cost = 15
+                if player.use_mana(mana_cost):
+                    print(f"{player.name} uses Power Strike! (-{mana_cost} Mana)")
+                    damage = random.randint(15, 25)
+                    print(f"Power Strike hits {enemy.name} for {damage} damage!")
+                    enemy.take_damage(damage)
 
             elif player.role == "Mage":
-                print(f"{player.name} casts Fireball!")
-                damage = random.randint(20, 30)
-                print(f"Fireball scorches {enemy.name} for {damage} damage!")
-                enemy.take_damage(damage)
+                mana_cost = 20
+                if player.use_mana(mana_cost):
+                    print(f"{player.name} casts Fireball! (-{mana_cost} Mana)")
+                    damage = random.randint(20, 30)
+                    print(f"Fireball scorches {enemy.name} for {damage} damage!")
+                    enemy.take_damage(damage)
 
             elif player.role == "Rogue":
-                print(f"{player.name} attempts a Sneak Attack!")
-                if random.random() > 0.2:  # 80% success rate
-                    damage = random.randint(10, 20) * 2  # Critical hit
-                    print(f"Sneak Attack critically hits {enemy.name} for {damage} damage!")
-                    enemy.take_damage(damage)
-                else:
-                    print(f"{player.name}'s Sneak Attack missed!")
+                mana_cost = 10
+                if player.use_mana(mana_cost):
+                    print(f"{player.name} attempts a Sneak Attack! (-{mana_cost} Mana)")
+                    if random.random() > 0.2:  # 80% success rate
+                        damage = random.randint(10, 20) * 2  # Critical hit
+                        print(f"Sneak Attack critically hits {enemy.name} for {damage} damage!")
+                        enemy.take_damage(damage)
+                    else:
+                        print(f"{player.name}'s Sneak Attack missed!")
 
         else:
             print("Invalid choice. You lose your turn!")
@@ -92,7 +98,7 @@ def combat(player, enemy):
         if choice == "2":
             player.defense -= 5
 
-        # Enemy's turn if it's still alive
+        # Enemy's turn if still alive
         if enemy.hp > 0:
             enemy.attack_player(player)
 
