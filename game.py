@@ -8,7 +8,7 @@ class Player:
     self.hp = 100
     self.attack = 10
     self.defense = 5
-    self.inventory = []
+    self.inventory = ["Health Potion"] # Starting Item for all Characters
 
   def take_damage(self, damage):
     self.hp -= max(damage - self.defense, 0)
@@ -75,6 +75,10 @@ def combat(player, enemy):
             print(f"You have been defeated... Game Over!")
         elif enemy.hp <= 0:
             print(f"You have defeated {enemy.name}!\n")
+            loot = random.choice(["Health Potion", None])
+            if loot:
+              player.inventory.append(loot)
+              print(f"{enemy.name} dropped a {loot}!")
 
 def main():
   print("Welcome to the Text-Based RPG Game!")
