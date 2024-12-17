@@ -35,17 +35,46 @@ class Enemy:
     print(f"{self.name} attacks {player.name} for {damage} damage!")
     player.take_damage(damage)
 
-# Game and Combat
+# Combat
 def combat(player, enemy):
-  print(f"\nA wild {enemy.name} appears!")
-  while player.hp > 0 and enemy.hp > 0:
-    player.attack_enemy(enemy)
-    if enemy.hp > 0:
-      enemy.attack_player(player)
-    if player.hp <= 0:
-      print(f"You have been defeated... Game Over!")
-    elif enemy.hp <= 0:
-      print(f"You have defeated {enemy.name}!\n")
+    print(f"\nA wild {enemy.name} appears!")
+    while player.hp > 0 and enemy.hp > 0:
+        print("\nChoose your action:")
+        print("1) Attack")
+        print("2) Defend")
+        print("3) Use Item (if available)")
+
+        choice = input("Enter 1, 2, or 3: ")
+
+        if choice == "1":  # Player attacks
+            player.attack_enemy(enemy)
+        elif choice == "2":  # Player defends
+            print(f"{player.name} raises their defense!")
+            player.defense += 5
+        elif choice == "3":  # Player uses an item
+            if "Health Potion" in player.inventory:
+                print(f"{player.name} uses a Health Potion!")
+                player.hp += 20
+                player.inventory.remove("Health Potion")
+                print(f"{player.name}'s HP: {player.hp}")
+            else:
+                print("You have no items to use!")
+        else:
+            print("Invalid choice. You lose your turn!")
+
+        # Reset defense after defending
+        if choice == "2":
+            player.defense -= 5
+
+        # Enemy's turn if it's still alive
+        if enemy.hp > 0:
+            enemy.attack_player(player)
+
+        # Check for end conditions
+        if player.hp <= 0:
+            print(f"You have been defeated... Game Over!")
+        elif enemy.hp <= 0:
+            print(f"You have defeated {enemy.name}!\n")
 
 def main():
   print("Welcome to the Text-Based RPG Game!")
