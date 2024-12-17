@@ -24,9 +24,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Combat System")
 
 # Load images
-background = pygame.image.load("background.jpg").convert()
-warrior_img = pygame.image.load("warrior.png").convert_alpha()
-enemy_img = pygame.image.load("enemy.png").convert_alpha()
+background = pygame.image.load("assets/background.jpg").convert()
+warrior_img = pygame.image.load("assets/warrior.png").convert_alpha()
+enemy_img = pygame.image.load("assets/enemy.png").convert_alpha()
 
 # Classes
 class Player:
