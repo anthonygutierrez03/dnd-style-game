@@ -56,7 +56,7 @@ def load_sprite_sheet(image_path, rows, cols, scale_factor=1, padding=1):
 
 # Load knight and goblin sprite sheets
 knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=5, padding=1)
-goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=2, padding=1)
+goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=2, padding=3)
 
 # Player Class
 class Player:
