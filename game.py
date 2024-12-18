@@ -27,27 +27,29 @@ background = pygame.image.load("assets/background.jpg").convert()
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
 # Load Sprites
-def load_sprite_sheet(image_path, rows, cols, scale_factor=1, padding=1):
+def load_sprite_sheet(image_path, rows, cols, scale_factor=1):
     """
     Load and split a sprite sheet into individual frames, and scale them.
-    Allows for optional padding adjustments.
     """
     sprite_sheet = pygame.image.load(image_path).convert_alpha()
     sheet_width, sheet_height = sprite_sheet.get_size()
-    frame_width = (sheet_width // cols) - padding
-    frame_height = (sheet_height // rows) - padding
+    
+    # Calculate precise frame size
+    frame_width = sheet_width // cols
+    frame_height = sheet_height // rows
 
     frames = []
     for row in range(rows):
         for col in range(cols):
+            # Extract the exact portion of the sprite sheet
             frame = sprite_sheet.subsurface(
                 pygame.Rect(
-                    col * (frame_width + padding),  # Adjust for padding
-                    row * (frame_height + padding),  # Adjust for padding
-                    frame_width, frame_height
+                    col * frame_width,  # Exact x-position
+                    row * frame_height,  # Exact y-position
+                    frame_width, frame_height  # Exact width and height
                 )
             )
-            # Scale the frame
+            # Scale the frame if necessary
             scaled_frame = pygame.transform.scale(
                 frame, (int(frame_width * scale_factor), int(frame_height * scale_factor))
             )
@@ -55,8 +57,8 @@ def load_sprite_sheet(image_path, rows, cols, scale_factor=1, padding=1):
     return frames, int(frame_width * scale_factor), int(frame_height * scale_factor)
 
 # Load knight and goblin sprite sheets
-knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=5, padding=1)
-goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=2, padding=3)
+knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=5)
+goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=2)
 
 # Player Class
 class Player:
