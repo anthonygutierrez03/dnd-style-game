@@ -58,7 +58,7 @@ def load_sprite_sheet(image_path, rows, cols, scale_factor=1):
 
 # Load knight and goblin sprite sheets
 knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=5)
-goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblin.png", 4, 11, scale_factor=2)
+goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblin_2.png", 4, 11, scale_factor=2)
 
 # Player Class
 class Player:
@@ -125,47 +125,27 @@ class Enemy:
     def __init__(self, name, x, y):
         self.name = name
         self.hp = 100
-        self.mana = 50
-        self.attack = 10
-        self.defense = 5
         self.x = x
         self.y = y
         self.frames = goblin_frames  # Loaded goblin frames
-        self.current_frame = 0       # Start frame for animation
-        self.state = "idle"           # States: idle, attack
-        self.animation_speed = 5      # Speed of animation (lower = faster)
-        self.frame_count = 0          # Frame counter for animations
+        self.current_frame = 0       # Use a single still frame (frame 0)
 
     def update(self):
-        # Handle animations based on state
-        self.frame_count += 1
-        if self.frame_count % self.animation_speed == 0:
-            if self.state == "idle":
-                # Idle animation: frames 33 to 40
-                start_frame = 15
-                total_frames = 5
-                self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
-            elif self.state == "attack":
-                # Attack animation: frames 41 to 48 (example range)
-                start_frame = 35
-                total_frames = 5
-                self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
-                # Reset back to idle after finishing attack
-                if (self.current_frame - start_frame) == total_frames - 1:
-                    self.state = "idle"
+        # No animation updates needed for a still image
+        pass
 
     def draw(self):
-        # Draw the current frame of the goblin
+        # Draw the single still frame
         current_sprite = self.frames[self.current_frame]
         screen.blit(current_sprite, (self.x, self.y))
+
         # HP bar
         pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
         pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
 
     def take_damage(self, damage):
-        self.hp -= max(damage - self.defense, 0)
+        self.hp -= max(damage, 0)
         print(f"{self.name} takes {damage} damage!")
-        self.state = "attack"  # Temporarily change to attack animation for visual effect
 
 
 # Main combat function
