@@ -131,7 +131,7 @@ class Enemy:
         self.x = x
         self.y = y
         self.frames = goblin_frames  # Loaded goblin frames
-        self.current_frame = 33       # Start frame for animation
+        self.current_frame = 0       # Start frame for animation
         self.state = "idle"           # States: idle, attack
         self.animation_speed = 5      # Speed of animation (lower = faster)
         self.frame_count = 0          # Frame counter for animations
@@ -142,13 +142,13 @@ class Enemy:
         if self.frame_count % self.animation_speed == 0:
             if self.state == "idle":
                 # Idle animation: frames 33 to 40
-                start_frame = 12
+                start_frame = 0
                 total_frames = 4
                 self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
             elif self.state == "attack":
                 # Attack animation: frames 41 to 48 (example range)
-                start_frame = 18
-                total_frames = 2
+                start_frame = 11
+                total_frames = 4
                 self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
                 # Reset back to idle after finishing attack
                 if (self.current_frame - start_frame) == total_frames - 1:
