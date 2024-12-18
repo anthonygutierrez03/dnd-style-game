@@ -142,13 +142,13 @@ class Enemy:
         if self.frame_count % self.animation_speed == 0:
             if self.state == "idle":
                 # Idle animation: frames 33 to 40
-                start_frame = 0
-                total_frames = 4
+                start_frame = 15
+                total_frames = 5
                 self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
             elif self.state == "attack":
                 # Attack animation: frames 41 to 48 (example range)
-                start_frame = 11
-                total_frames = 4
+                start_frame = 35
+                total_frames = 5
                 self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
                 # Reset back to idle after finishing attack
                 if (self.current_frame - start_frame) == total_frames - 1:
