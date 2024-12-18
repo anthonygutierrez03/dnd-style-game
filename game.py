@@ -75,20 +75,31 @@ class Player:
         self.frame_count += 1
         if self.frame_count % self.animation_speed == 0:
             if self.state == "idle":
-                # Use the first 5 frames of the first row
-                start_frame = 15  # First frame of the idle row
-                total_frames = 5  # Only 5 frames to loop through
+                # Use the first 5 frames of the idle row
+                start_frame = 15
+                total_frames = 5
                 self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
             elif self.state == "attack":
                 # Use the first 5 frames of the attack row
-                start_frame = 35  # Starting frame for the attack animation
-                total_frames = 5   # Only 5 frames to loop through
-                offset = self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
-                self.current_fram = start_frame + offset
-                
-                # Reset to Idle
-                if offset == total_frames - 1:
+                start_frame = 35
+                total_frames = 5
+                offset = (self.current_frame - start_frame + 1) % total_frames
+                self.current_frame = start_frame + offset
+
+                # Reset to idle when the attack animation finishes
+                if offset == total_frames - 1:  # Last frame of the attack animation
                     self.state = "idle"
+    
+    def draw(self):
+        current_sprite = self.frames[self.current_frame]
+        screen.blit(current_sprite, (self.x, self.y))
+        # HP and Mana Bars
+        pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
+        pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
+        pygame.draw.rect(screen, BLUE, (self.x, self.y + 70, self.mana, 10))
+    
+    def take_damage(self, damage):
+        self.hp -= max(damage - self.defense, 0)
 
                     
     def draw(self):
