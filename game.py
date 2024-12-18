@@ -126,24 +126,29 @@ class Enemy:
         self.name = name
         self.hp = 100
         self.frames = goblin_frames  # Loaded goblin frames
-        self.current_frame = 0
-        self.state = "idle"  # States: idle
-        self.animation_speed = 5
-        self.frame_count = 0
+        self.current_frame = 33       # Start at frame 33
+        self.state = "idle"           # States: idle
+        self.animation_speed = 5      # Number of updates before moving to the next frame
+        self.frame_count = 0          # Counts the updates
         self.x = x
         self.y = y
 
     def update(self):
+        # Update frame for animation (frames 33 to 40)
         self.frame_count += 1
         if self.frame_count % self.animation_speed == 0:
-            self.current_frame = (self.current_frame + 1) % 8  # Idle animation
-    
+            total_frames = 8  # Number of frames in the range (33 to 40 inclusive)
+            self.current_frame = 33 + (self.current_frame - 33 + 1) % total_frames
+
     def draw(self):
+        # Draw the current animation frame
         current_sprite = self.frames[self.current_frame]
         screen.blit(current_sprite, (self.x, self.y))
+        
+        # Draw HP bar above the enemy
         pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
         pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
-    
+
     def take_damage(self, damage):
         self.hp -= damage
 
