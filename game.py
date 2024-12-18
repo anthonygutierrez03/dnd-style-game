@@ -26,28 +26,33 @@ pygame.display.set_caption("Combat System")
 background = pygame.image.load("assets/background.jpg").convert()
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
-# Helper function to load sprite sheets
-def load_sprite_sheet(image_path, rows, cols, scale_factor=2):
+# Load Sprites
+def load_sprite_sheet(image_path, rows, cols, scale_factor=1, padding=1):
     """
-    Load and split a sprite sheet into individual frames.
+    Load and split a sprite sheet into individual frames, and scale them.
+    Allows for optional padding adjustments.
     """
     sprite_sheet = pygame.image.load(image_path).convert_alpha()
     sheet_width, sheet_height = sprite_sheet.get_size()
-    frame_width = sheet_width // cols
-    frame_height = sheet_height // rows
+    frame_width = (sheet_width // cols) - padding
+    frame_height = (sheet_height // rows) - padding
 
     frames = []
     for row in range(rows):
         for col in range(cols):
             frame = sprite_sheet.subsurface(
-                pygame.Rect(col * frame_width, row * frame_height, frame_width, frame_height)
+                pygame.Rect(
+                    col * (frame_width + padding),  # Adjust for padding
+                    row * (frame_height + padding),  # Adjust for padding
+                    frame_width, frame_height
+                )
             )
             # Scale the frame
             scaled_frame = pygame.transform.scale(
-                frame, (frame_width * scale_factor, frame_height * scale_factor)
+                frame, (int(frame_width * scale_factor), int(frame_height * scale_factor))
             )
             frames.append(scaled_frame)
-    return frames, frame_width * scale_factor, frame_height * scale_factor
+    return frames, int(frame_width * scale_factor), int(frame_height * scale_factor)
 
 # Load knight and goblin sprite sheets
 knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=5)
