@@ -87,28 +87,41 @@ def combat():
     attack_button = pygame.Rect(50, 500, 100, 50)
     defend_button = pygame.Rect(200, 500, 100, 50)
     ability_button = pygame.Rect(350, 500, 150, 50)
+
+    turn_tracker = "player"  # Keeps track of turns
     
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and turn_tracker == "player":
                 if attack_button.collidepoint(event.pos):
                     # Player attacks
                     damage = random.randint(5, 10)
                     print(f"Player attacks for {damage}!")
                     enemy.take_damage(damage)
+                    turn_tracker = "enemy"
                 elif defend_button.collidepoint(event.pos):
                     print("Player defends!")
                     player.defense += 5
+                    turn_tracker = "enemy"
                 elif ability_button.collidepoint(event.pos):
                     if player.use_mana(15):
                         damage = random.randint(15, 25)
                         print(f"Player uses Power Strike for {damage}!")
                         enemy.take_damage(damage)
+                        turn_tracker = "enemy"
                     else:
                         print("Not enough mana!")
         
+        # Enemy Turn
+        if turn_tracker == "enemy":
+            if enemy.hp > 0:
+                damage = random.randint(5, 12)
+                print(f"Enemy attacks for {damage}!")
+                player.take_damage(damage)
+            turn_tracker = "player"
+
         # Check for victory/defeat
         if player.hp <= 0:
             print("You lost!")
