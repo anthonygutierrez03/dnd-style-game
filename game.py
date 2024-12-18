@@ -50,8 +50,8 @@ def load_sprite_sheet(image_path, rows, cols, scale_factor=2):
     return frames, frame_width * scale_factor, frame_height * scale_factor
 
 # Load knight and goblin sprite sheets
-knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=3)
-goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=3)
+knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=5)
+goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=2)
 
 # Player Class
 class Player:
@@ -142,8 +142,8 @@ class Enemy:
 
 # Main combat function
 def combat():
-    player = Player("Hero", "Warrior", 100, 300)
-    enemy = Enemy("Goblin", 500, 300)
+    player = Player("Hero", "Warrior", 80, 300)
+    enemy = Enemy("Goblin", 400, 200)
     clock = pygame.time.Clock()
     running = True
 
