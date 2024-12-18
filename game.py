@@ -142,8 +142,8 @@ class Enemy:
 
 # Main combat function
 def combat():
-    player = Player("Hero", "Warrior", 90, 300)
-    enemy = Enemy("Goblin", 450, 200)
+    player = Player("Hero", "Warrior", 100, 280)
+    enemy = Enemy("Goblin", 500, 200)
     clock = pygame.time.Clock()
     running = True
 
