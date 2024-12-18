@@ -75,15 +75,16 @@ class Player:
         self.frame_count += 1
         if self.frame_count % self.animation_speed == 0:
             if self.state == "idle":
-                # Use whichever direction
-                start_frame = 15  # Player position
-                end_frame = 19    # End of player position
-                self.current_frame = start_frame + (self.current_frame + 1) % (end_frame - start_frame)
+                # Use the first 5 frames of the first row
+                start_frame = 15  # First frame of the idle row
+                total_frames = 5  # Only 5 frames to loop through
+                self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
             elif self.state == "attack":
-                # Example: 3rd row animation with first 5 frames
-                start_frame = 35  # Starting frame for the attack row (third row)
-                end_frame = 39    # First 5 frames of that row
-                self.current_frame = start_frame + (self.current_frame + 1) % (end_frame - start_frame)
+                # Use the first 5 frames of the attack row
+                start_frame = 35  # Starting frame for the attack animation
+                total_frames = 5   # Only 5 frames to loop through
+                self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
+
     
     def draw(self):
         current_sprite = self.frames[self.current_frame]
