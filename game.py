@@ -138,7 +138,7 @@ class Enemy:
         self.frame_count += 1
         if self.frame_count % self.animation_speed == 0:
             total_frames = 8  # Number of frames in the range (33 to 40 inclusive)
-            self.current_frame = 33 + (self.current_frame - 33 + 1) % total_frames
+            self.current_frame = 20 + (self.current_frame - 33 + 1) % total_frames
 
     def draw(self):
         # Draw the current animation frame
