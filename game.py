@@ -11,12 +11,11 @@ HEIGHT = 600
 # Colors
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 
 # Fonts
-pygame.font.init()
 font = pygame.font.SysFont("arial", 24)
 
 # Set up screen
@@ -25,11 +24,32 @@ pygame.display.set_caption("Combat System")
 
 # Load images
 background = pygame.image.load("assets/background.jpg").convert()
-background = pygame.transform.scale(background, (800, 600))
-warrior_img = pygame.image.load("assets/warrior.png").convert_alpha()
-enemy_img = pygame.image.load("assets/enemy.png").convert_alpha()
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
-# Classes
+# Helper function to load sprite sheets
+def load_sprite_sheet(image_path, rows, cols):
+    """
+    Load and split a sprite sheet into individual frames.
+    """
+    sprite_sheet = pygame.image.load(image_path).convert_alpha()
+    sheet_width, sheet_height = sprite_sheet.get_size()
+    frame_width = sheet_width // cols
+    frame_height = sheet_height // rows
+
+    frames = []
+    for row in range(rows):
+        for col in range(cols):
+            frame = sprite_sheet.subsurface(
+                pygame.Rect(col * frame_width, row * frame_height, frame_width, frame_height)
+            )
+            frames.append(frame)
+    return frames, frame_width, frame_height
+
+# Load knight and goblin sprite sheets
+knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 10, 8)
+goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblin.png", 5, 8)
+
+# Player Class
 class Player:
     def __init__(self, name, role, x, y):
         self.name = name
@@ -40,36 +60,53 @@ class Player:
         self.defense = 5
         self.x = x
         self.y = y
-        self.sprite = warrior_img  # Default sprite for the player
+        self.frames = knight_frames  # Loaded knight frames
+        self.current_frame = 0       # For animation
+        self.state = "idle"          # States: idle, attack
+        self.animation_speed = 5
+        self.frame_count = 0
+    
+    def update(self):
+        # Handle animations
+        self.frame_count += 1
+        if self.frame_count % self.animation_speed == 0:
+            if self.state == "idle":
+                self.current_frame = (self.current_frame + 1) % 8  # Idle: first row
+            elif self.state == "attack":
+                self.current_frame = 16 + (self.current_frame + 1) % 8  # Attack: third row
     
     def draw(self):
-        screen.blit(self.sprite, (self.x, self.y))
-        # HP Bar
+        current_sprite = self.frames[self.current_frame]
+        screen.blit(current_sprite, (self.x, self.y))
+        # HP and Mana Bars
         pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
         pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
-        # Mana Bar
         pygame.draw.rect(screen, BLUE, (self.x, self.y + 70, self.mana, 10))
     
     def take_damage(self, damage):
         self.hp -= max(damage - self.defense, 0)
-    
-    def use_mana(self, amount):
-        if self.mana >= amount:
-            self.mana -= amount
-            return True
-        return False
 
+# Enemy Class
 class Enemy:
     def __init__(self, name, x, y):
         self.name = name
         self.hp = 100
-        self.sprite = enemy_img
+        self.frames = goblin_frames  # Loaded goblin frames
+        self.current_frame = 0
+        self.state = "idle"  # States: idle
+        self.animation_speed = 5
+        self.frame_count = 0
         self.x = x
         self.y = y
+
+    def update(self):
+        self.frame_count += 1
+        if self.frame_count % self.animation_speed == 0:
+            self.current_frame = (self.current_frame + 1) % 8  # Idle animation
     
     def draw(self):
-        screen.blit(self.sprite, (self.x, self.y))
-        # HP Bar
+        current_sprite = self.frames[self.current_frame]
+        screen.blit(current_sprite, (self.x, self.y))
         pygame.draw.rect(screen, RED, (self.x, self.y - 10, 100, 10))
         pygame.draw.rect(screen, GREEN, (self.x, self.y - 10, self.hp, 10))
     
@@ -88,39 +125,25 @@ def combat():
     defend_button = pygame.Rect(200, 500, 100, 50)
     ability_button = pygame.Rect(350, 500, 150, 50)
 
-    turn_tracker = "player"  # Keeps track of turns
-    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN and turn_tracker == "player":
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if attack_button.collidepoint(event.pos):
-                    # Player attacks
-                    damage = random.randint(5, 10)
-                    print(f"Player attacks for {damage}!")
-                    enemy.take_damage(damage)
-                    turn_tracker = "enemy"
+                    print("Player attacks!")
+                    player.state = "attack"
+                    enemy.take_damage(random.randint(5, 10))
                 elif defend_button.collidepoint(event.pos):
                     print("Player defends!")
                     player.defense += 5
-                    turn_tracker = "enemy"
                 elif ability_button.collidepoint(event.pos):
-                    if player.use_mana(15):
-                        damage = random.randint(15, 25)
-                        print(f"Player uses Power Strike for {damage}!")
-                        enemy.take_damage(damage)
-                        turn_tracker = "enemy"
-                    else:
-                        print("Not enough mana!")
-        
-        # Enemy Turn
-        if turn_tracker == "enemy":
-            if enemy.hp > 0:
-                damage = random.randint(5, 12)
-                print(f"Enemy attacks for {damage}!")
-                player.take_damage(damage)
-            turn_tracker = "player"
+                    print("Player uses Power Strike!")
+                    enemy.take_damage(random.randint(15, 25))
+
+        # Update player and enemy animations
+        player.update()
+        enemy.update()
 
         # Check for victory/defeat
         if player.hp <= 0:
@@ -129,13 +152,13 @@ def combat():
         if enemy.hp <= 0:
             print("You won!")
             running = False
-        
+
         # Draw everything
         screen.blit(background, (0, 0))
         player.draw()
         enemy.draw()
-        
-        # Draw buttons
+
+        # Buttons
         pygame.draw.rect(screen, WHITE, attack_button)
         pygame.draw.rect(screen, WHITE, defend_button)
         pygame.draw.rect(screen, WHITE, ability_button)
