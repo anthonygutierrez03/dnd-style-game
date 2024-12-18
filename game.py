@@ -83,9 +83,14 @@ class Player:
                 # Use the first 5 frames of the attack row
                 start_frame = 35  # Starting frame for the attack animation
                 total_frames = 5   # Only 5 frames to loop through
-                self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
+                offset = self.current_frame = start_frame + (self.current_frame - start_frame + 1) % total_frames
+                self.current_fram = start_frame + offset
+                
+                # Reset to Idle
+                if offset == total_frames - 1:
+                    self.state = "idle"
 
-    
+                    
     def draw(self):
         current_sprite = self.frames[self.current_frame]
         screen.blit(current_sprite, (self.x, self.y))
