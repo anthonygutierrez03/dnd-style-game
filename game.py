@@ -27,7 +27,7 @@ background = pygame.image.load("assets/background.jpg").convert()
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
 # Helper function to load sprite sheets
-def load_sprite_sheet(image_path, rows, cols):
+def load_sprite_sheet(image_path, rows, cols, scale_factor=2):
     """
     Load and split a sprite sheet into individual frames.
     """
@@ -42,12 +42,16 @@ def load_sprite_sheet(image_path, rows, cols):
             frame = sprite_sheet.subsurface(
                 pygame.Rect(col * frame_width, row * frame_height, frame_width, frame_height)
             )
-            frames.append(frame)
-    return frames, frame_width, frame_height
+            # Scale the frame
+            scaled_frame = pygame.transform.scale(
+                frame, (frame_width * scale_factor, frame_height * scale_factor)
+            )
+            frames.append(scaled_frame)
+    return frames, frame_width * scale_factor, frame_height * scale_factor
 
 # Load knight and goblin sprite sheets
-knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5)
-goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11)
+knight_frames, knight_width, knight_height = load_sprite_sheet("assets/knight.png", 12, 5, scale_factor=3)
+goblin_frames, goblin_width, goblin_height = load_sprite_sheet("assets/goblinsword.png", 4, 11, scale_factor=3)
 
 # Player Class
 class Player:
